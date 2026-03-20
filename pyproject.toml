@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo-risk-analyzer"
+version = "0.1.0"
+description = "GitHub Repo Risk Analyzer API"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy>=2.0",
+    "alembic",
+    "psycopg2-binary",
+    "celery",
+    "redis",
+    "pydantic[email]",
+    "pydantic-settings",
+    "httpx",
+    "gitpython",
+    "radon",
+    "bandit",
+    "pwdlib[bcrypt]",
+    "python-jose[cryptography]",
+    "python-multipart"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+    "black",
+    "mypy"
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true

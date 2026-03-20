@@ -1,0 +1,649 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.5, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\Ayxan\Desktop\Projects\Git_API_analyzer\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Ayxan\Desktop\Projects\Git_API_analyzer
+configfile: pyproject.toml
+plugins: anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 6 items
+
+tests/integration/test_auth.py::test_health_check PASSED                 [ 16%]
+tests/integration/test_auth.py::test_register_user PASSED                [ 33%]
+tests/integration/test_auth.py::test_login_user PASSED                   [ 50%]
+tests/integration/test_auth.py::test_get_me FAILED                       [ 66%]
+tests/integration/test_repositories.py::test_register_repository FAILED  [ 83%]
+tests/integration/test_repositories.py::test_get_repositories FAILED     [100%]
+
+================================== FAILURES ===================================
+_________________________________ test_get_me _________________________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x000002A33B85D450>
+dialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002A33B4F0050>
+constructor = <bound method DefaultExecutionContext._init_compiled of <class 'sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext'>>
+statement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>
+parameters = [{}]
+execution_options = immutabledict({'_sa_orm_load_options': default_load_options(_legacy_uniquing=True), '_result_disable_adapt_to_context': True})
+args = (<sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>, [{}], <sqlalchemy.sql.selectable.Selec...57d7890-2401-487a-963b-fd7ff9633f53', type_=Uuid()), _OffsetLimitParam('%(2900101550544 param)s', 1, type_=Integer())])
+kw = {'cache_hit': <CacheStats.CACHE_MISS: 1>}, yp = None
+conn = <sqlalchemy.pool.base._ConnectionFairy object at 0x000002A33B77BBF0>
+
+    def _execute_context(
+        self,
+        dialect: Dialect,
+        constructor: Callable[..., ExecutionContext],
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+        execution_options: _ExecuteOptions,
+        *args: Any,
+        **kw: Any,
+    ) -> CursorResult[Any]:
+        """Create an :class:`.ExecutionContext` and execute, returning
+        a :class:`_engine.CursorResult`."""
+    
+        if execution_options:
+            yp = execution_options.get("yield_per", None)
+            if yp:
+                execution_options = execution_options.union(
+                    {"stream_results": True, "max_row_buffer": yp}
+                )
+        try:
+            conn = self._dbapi_connection
+            if conn is None:
+                conn = self._revalidate_connection()
+    
+>           context = constructor(
+                dialect, self, conn, execution_options, *args, **kw
+            )
+
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 'f57d7890-2401-487a-963b-fd7ff9633f53'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           AttributeError: 'str' object has no attribute 'hex'
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+client = <starlette.testclient.TestClient object at 0x000002A33B632790>
+
+    def test_get_me(client):
+        client.post(
+            "/api/v1/auth/register",
+            json={"email": "me@example.com", "password": "password123"}
+        )
+        login_response = client.post(
+            "/api/v1/auth/login",
+            data={"username": "me@example.com", "password": "password123"}
+        )
+        token = login_response.json()["access_token"]
+    
+>       response = client.get(
+            "/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+tests\integration\test_auth.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\starlette\testclient.py:473: in get
+    return super().get(
+venv\Lib\site-packages\httpx\_client.py:1053: in get
+    return self.request(
+venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\applications.py:1160: in __call__
+    await super().__call__(scope, receive, send)
+venv\Lib\site-packages\starlette\applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:736: in app
+    await route.handle(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:290: in handle
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\fastapi\routing.py:130: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\routing.py:116: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\routing.py:453: in app
+    solved_result = await solve_dependencies(
+venv\Lib\site-packages\fastapi\dependencies\utils.py:677: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:2502: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:986: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app\api\dependencies.py:33: in get_current_user
+    user = db.query(User).filter(User.id == user_id).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2759: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2857: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2351: in execute
+    return self._execute_internal(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2249: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+venv\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1419: in execute
+    return meth(
+venv\Lib\site-packages\sqlalchemy\sql\elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1821: in _execute_context
+    self._handle_dbapi_exception(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: in _execute_context
+    context = constructor(
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 'f57d7890-2401-487a-963b-fd7ff9633f53'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           sqlalchemy.exc.StatementError: (builtins.AttributeError) 'str' object has no attribute 'hex'
+E           [SQL: SELECT users.id AS users_id, users.email AS users_email, users.hashed_password AS users_hashed_password, users.is_active AS users_is_active, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+E           FROM users 
+E           WHERE users.id = ?
+E            LIMIT ? OFFSET ?]
+E           [parameters: [{}]]
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: StatementError
+__________________________ test_register_repository ___________________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x000002A33DE578D0>
+dialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002A33B4F0050>
+constructor = <bound method DefaultExecutionContext._init_compiled of <class 'sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext'>>
+statement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>
+parameters = [{}]
+execution_options = immutabledict({'_sa_orm_load_options': default_load_options(_legacy_uniquing=True), '_result_disable_adapt_to_context': True})
+args = (<sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>, [{}], <sqlalchemy.sql.selectable.Selec...daa479d-a4a9-4601-87f5-38f21e0d0b49', type_=Uuid()), _OffsetLimitParam('%(2900141372752 param)s', 1, type_=Integer())])
+kw = {'cache_hit': <CacheStats.CACHE_HIT: 0>}, yp = None
+conn = <sqlalchemy.pool.base._ConnectionFairy object at 0x000002A33DD47050>
+
+    def _execute_context(
+        self,
+        dialect: Dialect,
+        constructor: Callable[..., ExecutionContext],
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+        execution_options: _ExecuteOptions,
+        *args: Any,
+        **kw: Any,
+    ) -> CursorResult[Any]:
+        """Create an :class:`.ExecutionContext` and execute, returning
+        a :class:`_engine.CursorResult`."""
+    
+        if execution_options:
+            yp = execution_options.get("yield_per", None)
+            if yp:
+                execution_options = execution_options.union(
+                    {"stream_results": True, "max_row_buffer": yp}
+                )
+        try:
+            conn = self._dbapi_connection
+            if conn is None:
+                conn = self._revalidate_connection()
+    
+>           context = constructor(
+                dialect, self, conn, execution_options, *args, **kw
+            )
+
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = '7daa479d-a4a9-4601-87f5-38f21e0d0b49'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           AttributeError: 'str' object has no attribute 'hex'
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+client = <starlette.testclient.TestClient object at 0x000002A33E638C50>
+
+    def test_register_repository(client):
+        client.post("/api/v1/auth/register", json={"email": "repo@example.com", "password": "password123"})
+        login_res = client.post("/api/v1/auth/login", data={"username": "repo@example.com", "password": "password123"})
+        token = login_res.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+    
+        mock_metadata = {
+            "owner": {"login": "testowner"},
+            "name": "testrepo",
+            "full_name": "testowner/testrepo",
+            "html_url": "https://github.com/testowner/testrepo",
+            "clone_url": "https://github.com/testowner/testrepo.git",
+            "default_branch": "main",
+            "description": "Test Repo",
+            "language": "Python",
+            "stargazers_count": 10,
+            "forks_count": 2,
+            "open_issues_count": 1,
+            "private": False,
+            "archived": False
+        }
+    
+        with patch("app.services.repository_service.GitHubService.fetch_repo_metadata", return_value=mock_metadata):
+>           response = client.post(
+                "/api/v1/repositories",
+                json={"repository_url_or_name": "testowner/testrepo"},
+                headers=headers
+            )
+
+tests\integration\test_repositories.py:26: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\starlette\testclient.py:546: in post
+    return super().post(
+venv\Lib\site-packages\httpx\_client.py:1144: in post
+    return self.request(
+venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\applications.py:1160: in __call__
+    await super().__call__(scope, receive, send)
+venv\Lib\site-packages\starlette\applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:736: in app
+    await route.handle(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:290: in handle
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\fastapi\routing.py:130: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\routing.py:116: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\routing.py:453: in app
+    solved_result = await solve_dependencies(
+venv\Lib\site-packages\fastapi\dependencies\utils.py:677: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:2502: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:986: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app\api\dependencies.py:33: in get_current_user
+    user = db.query(User).filter(User.id == user_id).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2759: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2857: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2351: in execute
+    return self._execute_internal(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2249: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+venv\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1419: in execute
+    return meth(
+venv\Lib\site-packages\sqlalchemy\sql\elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1821: in _execute_context
+    self._handle_dbapi_exception(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: in _execute_context
+    context = constructor(
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = '7daa479d-a4a9-4601-87f5-38f21e0d0b49'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           sqlalchemy.exc.StatementError: (builtins.AttributeError) 'str' object has no attribute 'hex'
+E           [SQL: SELECT users.id AS users_id, users.email AS users_email, users.hashed_password AS users_hashed_password, users.is_active AS users_is_active, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+E           FROM users 
+E           WHERE users.id = ?
+E            LIMIT ? OFFSET ?]
+E           [parameters: [{}]]
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: StatementError
+____________________________ test_get_repositories ____________________________
+
+self = <sqlalchemy.engine.base.Connection object at 0x000002A33E3DF2D0>
+dialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x000002A33B4F0050>
+constructor = <bound method DefaultExecutionContext._init_compiled of <class 'sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext'>>
+statement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>
+parameters = [{}]
+execution_options = immutabledict({'_sa_orm_load_options': default_load_options(_legacy_uniquing=True), '_result_disable_adapt_to_context': True})
+args = (<sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x000002A33B85D610>, [{}], <sqlalchemy.sql.selectable.Selec...f399f34-bd1b-4a1c-aa73-403354073c6a', type_=Uuid()), _OffsetLimitParam('%(2900147173008 param)s', 1, type_=Integer())])
+kw = {'cache_hit': <CacheStats.CACHE_HIT: 0>}, yp = None
+conn = <sqlalchemy.pool.base._ConnectionFairy object at 0x000002A33BA5A3F0>
+
+    def _execute_context(
+        self,
+        dialect: Dialect,
+        constructor: Callable[..., ExecutionContext],
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+        execution_options: _ExecuteOptions,
+        *args: Any,
+        **kw: Any,
+    ) -> CursorResult[Any]:
+        """Create an :class:`.ExecutionContext` and execute, returning
+        a :class:`_engine.CursorResult`."""
+    
+        if execution_options:
+            yp = execution_options.get("yield_per", None)
+            if yp:
+                execution_options = execution_options.union(
+                    {"stream_results": True, "max_row_buffer": yp}
+                )
+        try:
+            conn = self._dbapi_connection
+            if conn is None:
+                conn = self._revalidate_connection()
+    
+>           context = constructor(
+                dialect, self, conn, execution_options, *args, **kw
+            )
+
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 'bf399f34-bd1b-4a1c-aa73-403354073c6a'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           AttributeError: 'str' object has no attribute 'hex'
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: AttributeError
+
+The above exception was the direct cause of the following exception:
+
+client = <starlette.testclient.TestClient object at 0x000002A33C80E850>
+
+    def test_get_repositories(client):
+        client.post("/api/v1/auth/register", json={"email": "repo2@example.com", "password": "password123"})
+        login_res = client.post("/api/v1/auth/login", data={"username": "repo2@example.com", "password": "password123"})
+        token = login_res.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+    
+>       response = client.get("/api/v1/repositories", headers=headers)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\integration\test_repositories.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+venv\Lib\site-packages\starlette\testclient.py:473: in get
+    return super().get(
+venv\Lib\site-packages\httpx\_client.py:1053: in get
+    return self.request(
+venv\Lib\site-packages\starlette\testclient.py:445: in request
+    return super().request(
+venv\Lib\site-packages\httpx\_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:914: in send
+    response = self._send_handling_auth(
+venv\Lib\site-packages\httpx\_client.py:942: in _send_handling_auth
+    response = self._send_handling_redirects(
+venv\Lib\site-packages\httpx\_client.py:979: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\httpx\_client.py:1014: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\testclient.py:348: in handle_request
+    raise exc
+venv\Lib\site-packages\starlette\testclient.py:345: in handle_request
+    portal.call(self.app, scope, receive, send)
+venv\Lib\site-packages\anyio\from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+venv\Lib\site-packages\anyio\from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\applications.py:1160: in __call__
+    await super().__call__(scope, receive, send)
+venv\Lib\site-packages\starlette\applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:736: in app
+    await route.handle(scope, receive, send)
+venv\Lib\site-packages\starlette\routing.py:290: in handle
+    await self.app(scope, receive, send)
+venv\Lib\site-packages\fastapi\routing.py:130: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+venv\Lib\site-packages\fastapi\routing.py:116: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\fastapi\routing.py:453: in app
+    solved_result = await solve_dependencies(
+venv\Lib\site-packages\fastapi\dependencies\utils.py:677: in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\starlette\concurrency.py:32: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\to_thread.py:63: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:2502: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+venv\Lib\site-packages\anyio\_backends\_asyncio.py:986: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+app\api\dependencies.py:33: in get_current_user
+    user = db.query(User).filter(User.id == user_id).first()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2759: in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ^^^^^^^^^^^^^^^^^^^^^
+venv\Lib\site-packages\sqlalchemy\orm\query.py:2857: in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2351: in execute
+    return self._execute_internal(
+venv\Lib\site-packages\sqlalchemy\orm\session.py:2249: in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+venv\Lib\site-packages\sqlalchemy\orm\context.py:306: in orm_execute_statement
+    result = conn.execute(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1419: in execute
+    return meth(
+venv\Lib\site-packages\sqlalchemy\sql\elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1821: in _execute_context
+    self._handle_dbapi_exception(
+venv\Lib\site-packages\sqlalchemy\engine\base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+venv\Lib\site-packages\sqlalchemy\engine\base.py:1815: in _execute_context
+    context = constructor(
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1494: in _init_compiled
+    l_param: List[Any] = [
+venv\Lib\site-packages\sqlalchemy\engine\default.py:1496: in <listcomp>
+    flattened_processors[key](compiled_params[key])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = 'bf399f34-bd1b-4a1c-aa73-403354073c6a'
+
+    def process(value):
+        if value is not None:
+>           value = value.hex
+                    ^^^^^^^^^
+E           sqlalchemy.exc.StatementError: (builtins.AttributeError) 'str' object has no attribute 'hex'
+E           [SQL: SELECT users.id AS users_id, users.email AS users_email, users.hashed_password AS users_hashed_password, users.is_active AS users_is_active, users.created_at AS users_created_at, users.updated_at AS users_updated_at 
+E           FROM users 
+E           WHERE users.id = ?
+E            LIMIT ? OFFSET ?]
+E           [parameters: [{}]]
+
+venv\Lib\site-packages\sqlalchemy\sql\sqltypes.py:3734: StatementError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_auth.py::test_get_me - sqlalchemy.exc.Statement...
+FAILED tests/integration/test_repositories.py::test_register_repository - sql...
+FAILED tests/integration/test_repositories.py::test_get_repositories - sqlalc...
+========================= 3 failed, 3 passed in 8.50s =========================

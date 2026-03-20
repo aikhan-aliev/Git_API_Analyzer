@@ -1,0 +1,27 @@
+Metadata-Version: 2.4
+Name: repo-risk-analyzer
+Version: 0.1.0
+Summary: GitHub Repo Risk Analyzer API
+Requires-Python: >=3.11
+Requires-Dist: fastapi
+Requires-Dist: uvicorn[standard]
+Requires-Dist: sqlalchemy>=2.0
+Requires-Dist: alembic
+Requires-Dist: psycopg2-binary
+Requires-Dist: celery
+Requires-Dist: redis
+Requires-Dist: pydantic
+Requires-Dist: pydantic-settings
+Requires-Dist: httpx
+Requires-Dist: gitpython
+Requires-Dist: radon
+Requires-Dist: bandit
+Requires-Dist: passlib[bcrypt]
+Requires-Dist: python-jose[cryptography]
+Requires-Dist: python-multipart
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: pytest-asyncio; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
